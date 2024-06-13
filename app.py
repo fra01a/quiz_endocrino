@@ -11,19 +11,22 @@ def read_questions_from_docx(file_path):
     for para in doc.paragraphs:
         text = para.text.strip()
         if any(run.bold for run in para.runs):  # Check if any part of the paragraph is bold
-            if current_question:
+            if current_question and current_question["answers"]:  # Ensure there is at least one answer
                 questions.append(current_question)
             current_question = {"question": text, "answers": [], "correct": 0}  # Initialize correct answer index as 0 (first answer)
         elif text.startswith("a)") or text.startswith("b)") or text.startswith("c)") or text.startswith("d)") or text.startswith("e)"):
             if current_question:
                 current_question["answers"].append(text)
-    if current_question:
+    if current_question and current_question["answers"]:
         questions.append(current_question)
     return questions
 
 # Function to shuffle the answers and store the shuffled order
 def shuffle_answers(questions):
     for question in questions:
+        if not question["answers"]:
+            st.error(f"Error in question: {question['question']} - No answers found")
+            continue  # Skip this question if it doesn't have any answers
         correct_answer = question["answers"][0]  # The first answer is always correct in the original file
         shuffled_order = list(range(len(question["answers"])))
         random.shuffle(shuffled_order)
@@ -35,6 +38,12 @@ def shuffle_answers(questions):
 # Percorso del file con le domande
 file_path = 'Domandendocrino.docx'
 questions = read_questions_from_docx(file_path)
+
+# Log the parsed questions for debugging
+st.write("Parsed Questions:")
+for q in questions:
+    st.write(q)
+
 shuffled_questions = shuffle_answers(questions)
 
 # Streamlit app
