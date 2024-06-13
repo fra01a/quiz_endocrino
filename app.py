@@ -25,7 +25,6 @@ def read_questions_from_docx(file_path):
 def shuffle_answers(questions):
     for question in questions:
         if not question["answers"]:
-            st.error(f"Error in question: {question['question']} - No answers found")
             continue  # Skip this question if it doesn't have any answers
         correct_answer = question["answers"][0]  # The first answer is always correct in the original file
         shuffled_order = list(range(len(question["answers"])))
@@ -38,12 +37,6 @@ def shuffle_answers(questions):
 # Percorso del file con le domande
 file_path = 'Domandendocrino.docx'
 questions = read_questions_from_docx(file_path)
-
-# Log the parsed questions for debugging
-st.write("Parsed Questions:")
-for q in questions:
-    st.write(q)
-
 shuffled_questions = shuffle_answers(questions)
 
 # Streamlit app
