@@ -7,14 +7,13 @@ def read_questions_from_docx(file_path):
     doc = docx.Document(file_path)
     questions = []
     current_question = None
-    current_question_text = ""
+
     for para in doc.paragraphs:
         text = para.text.strip()
         if len(text) > 1 and text[0].isdigit() and text[1] == '.':
             if current_question:
                 questions.append(current_question)
-            current_question_text = text
-            current_question = {"question": current_question_text, "answers": [], "correct": None}
+            current_question = {"question": text, "answers": [], "correct": None}
         elif text.startswith("a)") or text.startswith("b)") or text.startswith("c)") or text.startswith("d)") or text.startswith("e)"):
             if current_question:
                 current_question["answers"].append(text)
@@ -27,12 +26,12 @@ def read_questions_from_docx(file_path):
 # Function to shuffle the answers and store the shuffled order
 def shuffle_answers(questions):
     for question in questions:
-        correct_answer = question["answers"][0]
+        correct_answer = question["answers"][question["correct"]]
         shuffled_order = list(range(len(question["answers"])))
         random.shuffle(shuffled_order)
         question["shuffled_order"] = shuffled_order
         question["shuffled_answers"] = [question["answers"][i] for i in shuffled_order]
-        question["correct"] = shuffled_order.index(0)  # Find the new position of the correct answer
+        question["correct"] = shuffled_order.index(question["correct"])  # Find the new position of the correct answer
     return questions
 
 # Percorso del file con le domande
