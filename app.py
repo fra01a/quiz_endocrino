@@ -13,12 +13,10 @@ def read_questions_from_docx(file_path):
         if any(run.bold for run in para.runs):  # Check if any part of the paragraph is bold
             if current_question:
                 questions.append(current_question)
-            current_question = {"question": text, "answers": [], "correct": None}
+            current_question = {"question": text, "answers": [], "correct": 0}  # Initialize correct answer index as 0 (first answer)
         elif text.startswith("a)") or text.startswith("b)") or text.startswith("c)") or text.startswith("d)") or text.startswith("e)"):
             if current_question:
                 current_question["answers"].append(text)
-                if text.startswith("a)"):  # Assuming the first option is always the correct one
-                    current_question["correct"] = len(current_question["answers"]) - 1
     if current_question:
         questions.append(current_question)
     return questions
@@ -26,12 +24,12 @@ def read_questions_from_docx(file_path):
 # Function to shuffle the answers and store the shuffled order
 def shuffle_answers(questions):
     for question in questions:
-        correct_answer = question["answers"][question["correct"]]
+        correct_answer = question["answers"][0]  # The first answer is always correct in the original file
         shuffled_order = list(range(len(question["answers"])))
         random.shuffle(shuffled_order)
         question["shuffled_order"] = shuffled_order
         question["shuffled_answers"] = [question["answers"][i] for i in shuffled_order]
-        question["correct"] = shuffled_order.index(question["correct"])  # Find the new position of the correct answer
+        question["correct"] = shuffled_order.index(0)  # Find the new position of the original correct answer (index 0)
     return questions
 
 # Percorso del file con le domande
