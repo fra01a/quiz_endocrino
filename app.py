@@ -10,7 +10,7 @@ def read_questions_from_docx(file_path):
 
     for para in doc.paragraphs:
         text = para.text.strip()
-        if len(text) > 1 and text[0].isdigit() and text[1] == '.':
+        if any(run.bold for run in para.runs):  # Check if any part of the paragraph is bold
             if current_question:
                 questions.append(current_question)
             current_question = {"question": text, "answers": [], "correct": None}
