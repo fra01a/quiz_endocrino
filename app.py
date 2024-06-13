@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Jun 13 09:49:37 2024
-
-@author: Francesco
-"""
-
 import random
 import streamlit as st
 import docx
@@ -17,17 +10,16 @@ def read_questions_from_docx(file_path):
     current_question_text = ""
     for para in doc.paragraphs:
         text = para.text.strip()
-        if text:
-            if text[0].isdigit() and text[1] == '.':
-                if current_question:
-                    questions.append(current_question)
-                current_question_text = text
-                current_question = {"question": current_question_text, "answers": [], "correct": None}
-            elif text.startswith("a)") or text.startswith("b)") or text.startswith("c)") or text.startswith("d)") or text.startswith("e)"):
-                if current_question:
-                    current_question["answers"].append(text)
-                    if text.startswith("a)"):  # Assuming the first option is always the correct one
-                        current_question["correct"] = len(current_question["answers"]) - 1
+        if len(text) > 1 and text[0].isdigit() and text[1] == '.':
+            if current_question:
+                questions.append(current_question)
+            current_question_text = text
+            current_question = {"question": current_question_text, "answers": [], "correct": None}
+        elif text.startswith("a)") or text.startswith("b)") or text.startswith("c)") or text.startswith("d)") or text.startswith("e)"):
+            if current_question:
+                current_question["answers"].append(text)
+                if text.startswith("a)"):  # Assuming the first option is always the correct one
+                    current_question["correct"] = len(current_question["answers"]) - 1
     if current_question:
         questions.append(current_question)
     return questions
